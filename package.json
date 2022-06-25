@@ -40,6 +40,7 @@
   },
   "scripts": {
     "hardhat:compile": "hardhat compile",
-    "hardhat:deploy:wrappedMetaDeploy": "hardhat run --network BSCTestnet scripts/WrappedMetaDeploy.ts"
+    "hardhat:deploy:wrappedMeta": "hardhat run --network BSCTestnet scripts/WrappedMetaDeploy.ts",
+    "hardhat:verify:wrappedMeta": "hardhat verify --network BSCTestnet 0xa6E53D577e204adFcac82F9301d28bA14628Ff88"
   }
 }

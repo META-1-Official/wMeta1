@@ -19,13 +19,16 @@ contract WrappedMeta is
 {
     bytes32 public constant SNAPSHOT_ROLE = keccak256("SNAPSHOT_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor() ERC20("Wrapped Meta", "wMeta") ERC20Permit("Wrapped Meta") {
+    constructor()
+        ERC20("Wrapped Meta 1", "wMETA1")
+        ERC20Permit("Wrapped Meta 1")
+    {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(SNAPSHOT_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
-        _grantRole(MINTER_ROLE, msg.sender);
+
+        _mint(msg.sender, 100000000 * 10 ** decimals()); // Pre Mint all 100M tokens
     }
 
     function snapshot() public onlyRole(SNAPSHOT_ROLE) {
@@ -38,10 +41,6 @@ contract WrappedMeta is
 
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
-    }
-
-    function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
-        _mint(to, amount);
     }
 
     function _beforeTokenTransfer(

@@ -1,133 +1,133 @@
 // We import Chai to use its asserting functions here.
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 const { expect } = require("chai");
 
-// `describe` is a Mocha function that allows you to organize your tests. It's
-// not actually needed, but having your tests organized makes debugging them
-// easier. All Mocha functions are available in the global scope.
-
-// `describe` receives the name of a section of your test suite, and a callback.
-// The callback must define the tests of that section. This callback can't be
-// an async function.
-describe("Wrapped Meta Token", function() {
-  // Mocha has four functions that let you hook into the test runner's
-  // lifecyle. These are: `before`, `beforeEach`, `after`, `afterEach`.
-
-  // They're very useful to setup the environment for tests, and to clean it
-  // up after they run.
-
-  // A common pattern is to declare some variables, and assign them in the
-  // `before` and `beforeEach` callbacks.
-
-  let Token;
-  let hardhatToken: Contract;
+describe("Wrapped Meta Token", function () {
+  let MetaToken;
+  let wMetaToken: Contract;
   let owner: SignerWithAddress;
   let addr1: SignerWithAddress;
   let addr2: SignerWithAddress;
 
-  // `beforeEach` will run before each test, re-deploying the contract every
-  // time. It receives a callback, which can be async.
-  beforeEach(async function() {
-    // Get the ContractFactory and Signers here.
-    Token = await ethers.getContractFactory("WrappedMeta");
-    [ owner, addr1, addr2 ] = await ethers.getSigners();
+  const mintedTokens: BigNumber = BigNumber.from((100 * 10 ** 18).toString());
 
-    // To deploy our contract, we just have to call Token.deploy() and await
-    // for it to be deployed(), which happens once its transaction has been
-    // mined.
-    hardhatToken = await Token.deploy();
+  beforeEach(async function () {
+    MetaToken = await ethers.getContractFactory("WrappedMeta");
+    [owner, addr1, addr2] = await ethers.getSigners();
+    wMetaToken = await MetaToken.deploy();
+
+    await wMetaToken.mint(owner.address, mintedTokens);
+    const ownerBalance = await wMetaToken.balanceOf(owner.address);
+    expect(await wMetaToken.totalSupply()).to.equal(mintedTokens);
+    expect(ownerBalance).to.equal(mintedTokens);
   });
 
-  // You can nest describe calls to create subsections.
-  describe("Deployment", function() {
-    // `it` is another Mocha function. This is the one you use to define your
-    // tests. It receives the test name, and a callback function.
-
-    // If the callback function is async, Mocha will `await` it.
-    it("Should set the right owner", async function() {
-      // Expect receives a value, and wraps it in an Assertion object. These
-      // objects have a lot of utility methods to assert values.
-
-      // This test expects the owner variable stored in the contract to be equal
-      // to our Signer's owner.
+  describe("Deployment", function () {
+    it("Should set the right owner", async function () {
       expect(
-        await hardhatToken.hasRole(
-          await hardhatToken.MINTER_ROLE(),
-          owner.address
-        )
+        await wMetaToken.hasRole(await wMetaToken.MINTER_ROLE(), owner.address)
       ).to.equal(true);
 
       expect(
-        await hardhatToken.hasRole(
-          await hardhatToken.PAUSER_ROLE(),
-          owner.address
-        )
+        await wMetaToken.hasRole(await wMetaToken.PAUSER_ROLE(), owner.address)
       ).to.equal(true);
 
       expect(
-        await hardhatToken.hasRole(
-          await hardhatToken.SNAPSHOT_ROLE(),
+        await wMetaToken.hasRole(
+          await wMetaToken.SNAPSHOT_ROLE(),
           owner.address
         )
       ).to.equal(true);
-
     });
 
-    it("Should assign the total supply of tokens to the owner", async function() {
-      const ownerBalance = await hardhatToken.balanceOf(owner.address);
-      expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
+    it("Should return false to the wrong owner", async function () {
+      expect(
+        await wMetaToken.hasRole(await wMetaToken.MINTER_ROLE(), addr1.address)
+      ).to.equal(false);
+
+      expect(
+        await wMetaToken.hasRole(await wMetaToken.PAUSER_ROLE(), addr1.address)
+      ).to.equal(false);
+
+      expect(
+        await wMetaToken.hasRole(
+          await wMetaToken.SNAPSHOT_ROLE(),
+          addr1.address
+        )
+      ).to.equal(false);
+    });
+
+    it("Should assign the total supply of tokens to the owner", async function () {
+      const ownerBalance = await wMetaToken.balanceOf(owner.address);
+      expect(await wMetaToken.totalSupply()).to.equal(ownerBalance);
     });
   });
+  describe("Pausable", function () {
+    it("Should not be paused by user who is not having the PAUSER_ROLE", async function () {
+      await expect(wMetaToken.connect(addr1).pause()).to.be.revertedWith(
+        `AccessControl: account ${addr1.address.toLowerCase()} is missing role ${await wMetaToken.PAUSER_ROLE()}`
+      );
+    });
+    it("Should be paused only by the owner / by user who is having the PAUSER_ROLE", async function () {
+      expect(await wMetaToken.connect(owner).pause());
 
-  describe("Transactions", function() {
-    it("Should transfer tokens between accounts", async function() {
-      // Transfer 50 tokens from owner to addr1
-      await hardhatToken.transfer(addr1.address, 50);
-      const addr1Balance = await hardhatToken.balanceOf(addr1.address);
+      await expect(wMetaToken.connect(addr2).pause()).to.be.revertedWith(
+        `AccessControl: account ${addr2.address.toLowerCase()} is missing role ${await wMetaToken.PAUSER_ROLE()}`
+      );
+
+      await wMetaToken
+        .connect(owner)
+        .grantRole(await wMetaToken.PAUSER_ROLE(), addr2.address);
+
+      await expect(wMetaToken.connect(addr2).pause()).to.be.revertedWith(
+        "Pausable: paused"
+      );
+    });
+  });
+  describe("Transactions", function () {
+    it("Should transfer tokens between accounts", async function () {
+      await wMetaToken.transfer(addr1.address, 50);
+      const addr1Balance = await wMetaToken.balanceOf(addr1.address);
       expect(addr1Balance).to.equal(50);
 
-      // Transfer 50 tokens from addr1 to addr2
-      // We use .connect(signer) to send a transaction from another account
-      await hardhatToken.connect(addr1).transfer(addr2.address, 50);
-      const addr2Balance = await hardhatToken.balanceOf(addr2.address);
+      await wMetaToken.connect(addr1).transfer(addr2.address, 50);
+      const addr2Balance = await wMetaToken.balanceOf(addr2.address);
       expect(addr2Balance).to.equal(50);
     });
 
-    it("Should fail if sender doesn’t have enough tokens", async function() {
-      const initialOwnerBalance = await hardhatToken.balanceOf(owner.address);
+    it("Should fail if sender doesn’t have enough tokens", async function () {
+      const initialOwnerBalance: BigNumber = await wMetaToken.balanceOf(
+        owner.address
+      );
 
-      // Try to send 1 token from addr1 (0 tokens) to owner (1000000 tokens).
-      // `require` will evaluate false and revert the transaction.
       await expect(
-        hardhatToken.connect(addr1).transfer(owner.address, 1)
-      ).to.be.revertedWith("Not enough tokens");
+        wMetaToken
+          .connect(addr1)
+          .transfer(owner.address, mintedTokens.add(BigNumber.from(2)))
+      ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
 
-      // Owner balance shouldn't have changed.
-      expect(await hardhatToken.balanceOf(owner.address)).to.equal(
+      expect(await wMetaToken.balanceOf(owner.address)).to.equal(
         initialOwnerBalance
       );
     });
 
-    it("Should update balances after transfers", async function() {
-      const initialOwnerBalance = await hardhatToken.balanceOf(owner.address);
+    it("Should update balances after transfers", async function () {
+      const initialOwnerBalance = await wMetaToken.balanceOf(owner.address);
 
-      // Transfer 100 tokens from owner to addr1.
-      await hardhatToken.transfer(addr1.address, 100);
+      await wMetaToken.transfer(addr1.address, 100);
 
-      // Transfer another 50 tokens from owner to addr2.
-      await hardhatToken.transfer(addr2.address, 50);
+      await wMetaToken.transfer(addr2.address, 50);
 
-      // Check balances.
-      const finalOwnerBalance = await hardhatToken.balanceOf(owner.address);
+      const finalOwnerBalance = await wMetaToken.balanceOf(owner.address);
       expect(finalOwnerBalance).to.equal(initialOwnerBalance.sub(150));
 
-      const addr1Balance = await hardhatToken.balanceOf(addr1.address);
+      const addr1Balance = await wMetaToken.balanceOf(addr1.address);
       expect(addr1Balance).to.equal(100);
 
-      const addr2Balance = await hardhatToken.balanceOf(addr2.address);
+      const addr2Balance = await wMetaToken.balanceOf(addr2.address);
       expect(addr2Balance).to.equal(50);
     });
   });

@@ -5,7 +5,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-contract Oracle {
+contract AggregatorOracle {
     AggregatorV3Interface internal priceFeed;
 
     constructor(address AggregatorAddress) {

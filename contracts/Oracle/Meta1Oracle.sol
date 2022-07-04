@@ -40,10 +40,10 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
             this.fulfillPriceUpdate.selector
         );
 
-        req.add('urlPrice', 'https://someserver.com/ticker/USDT/META1');
+        req.add('urlPrice', 'https://meta1.bucle.dev/ticker/USDT/META1');
         req.add('pathPrice', 'data,latest');
         req.addInt('times', int256(10**ratePrecision));
-        req.add('urlUpdatedAt', 'https://someserver.com/ticker/USDT/META1');
+        req.add('urlUpdatedAt', 'https://meta1.bucle.dev/ticker/USDT/META1');
         req.add('path', 'updated_at');
 
         sendChainlinkRequest(req, payment);

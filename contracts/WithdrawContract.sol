@@ -2,47 +2,55 @@
 
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./Oracle/IMeta1Oracle.sol";
 
 contract WithdrawContract is OwnableUpgradeable {
-    using SafeERC20 for IERC20Metadata;
+    using SafeERC20Upgradeable for IERC20MetadataUpgradeable;
 
-    IERC20Metadata constant USDT = IERC20Metadata(0x337610d27c682E347C9cD60BD4b3b107C9d34dDd);
+    IERC20MetadataUpgradeable constant USDT = IERC20MetadataUpgradeable(0x337610d27c682E347C9cD60BD4b3b107C9d34dDd);
 
-    IERC20Metadata wMeta1;
+    IERC20MetadataUpgradeable wMeta1;
     IMeta1Oracle meta1Oracle;
 
-    // @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
+//    // @custom:oz-upgrades-unsafe-allow constructor
+//    constructor() {
+//        _disableInitializers();
+//    }
 
     function initialize(address _wMeta1, address _meta1Oracle) public initializer {
         __Ownable_init();
 
-        wMeta1 = IERC20Metadata(_wMeta1);
+        wMeta1 = IERC20MetadataUpgradeable(_wMeta1);
         meta1Oracle = IMeta1Oracle(_meta1Oracle);
+    }
+
+    function calcDepositAmount(uint256 _amount) public view returns (uint256) {
+        // Normalise oracle price as per USDT token decimals
+        uint256 meta1Price = (uint256(meta1Oracle.getLatestPrice()) * (10 ** USDT.decimals())) / 10 ** meta1Oracle.ratePrecision();
+        // Multiplying with 1e8 to support values lower then the price of meta1 token upto 8 decimal precision
+        return ((_amount * 1e8) / meta1Price) * (10 ** (wMeta1.decimals() - 8));
     }
 
     function deposit(uint256 _amount) public {
         USDT.safeTransferFrom(msg.sender, address(this), _amount);
-        // Normalise oracle price as per USDT token decimals
-        uint256 meta1Price = (uint256(meta1Oracle.getLatestPrice()) * (10 ** USDT.decimals())) / 10 ** meta1Oracle.ratePrecision();
-        // Multiplying with 1e8 to support values lower then the price of meta1 token upto 8 decimal precision
-        uint256 depositAmount = ((_amount * 1e8) / meta1Price) * (10 ** (wMeta1.decimals() - 8));
+        uint256 depositAmount = calcDepositAmount(_amount);
         wMeta1.safeTransfer(msg.sender, depositAmount);
+    }
+
+    function calcWithdrawAmount(uint256 _amount) public view returns (uint256) {
+        // Normalise oracle price as per provided token decimals
+        uint256 meta1Price = (uint256(meta1Oracle.getLatestPrice()) * (10 ** USDT.decimals())) / 10 ** meta1Oracle.ratePrecision();
+
+        return (_amount * meta1Price) / (10 ** (wMeta1.decimals()));
     }
 
     function withdraw(uint256 _amount) public {
         wMeta1.safeTransferFrom(msg.sender, address(this), _amount);
-        // Normalise oracle price as per provided token decimals
-        uint256 meta1Price = (uint256(meta1Oracle.getLatestPrice()) * (10 ** USDT.decimals())) / 10 ** meta1Oracle.ratePrecision();
-
-        uint256 withdrawAmount = (_amount * meta1Price) / (10 ** (wMeta1.decimals()));
+        uint256 withdrawAmount = calcWithdrawAmount(_amount);
         USDT.safeTransfer(msg.sender, withdrawAmount);
     }
 
@@ -52,6 +60,6 @@ contract WithdrawContract is OwnableUpgradeable {
     }
 
     function _transferAnyToken(address _tokenAddress, address _recipient, uint _amount) external onlyOwner {
-        require(IERC20(_tokenAddress).transfer(_recipient, _amount), "WC: Token transfer failed");
+        require(IERC20MetadataUpgradeable(_tokenAddress).transfer(_recipient, _amount), "WC: Token transfer failed");
     }
 }

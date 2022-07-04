@@ -1,0 +1,219 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x672199BcE7048129AB43d54683F336478D400641",
+    "txHash": "0xe2879e6cb2e5454955087dcf4a9e81ae165622b9652d5bad98bbcd086a6b7a02"
+  },
+  "proxies": [
+    {
+      "address": "0xb370496e6e8A41b753325A18282f7696A879A871",
+      "txHash": "0x922b36fbaa70a55ef7c030964958ba8bf722e315d4c60a5b63abe3633c6a2157",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xacF96Ad1959050f0Fb0Bb6fbc22cA4bab814D92C",
+      "txHash": "0x04eb98bdb9b3531dc5e241305895c4275b60b50127a942b790ebf279c89ab6f5",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "39cba13b06363f3db4985ab5d775437d2abe140f7aa4a7f828361102df4ab0ca": {
+      "address": "0x4ED9C0Fd3872BaD359FBA91F285534A29b52d140",
+      "txHash": "0xf8ef1a93f550edb07fb4312a76c3ae48b76a9c44430270c8b55a3b20e8355a49",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "label": "wMeta1",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20MetadataUpgradeable)368",
+            "contract": "WithdrawContract",
+            "src": "contracts/WithdrawContract.sol:16"
+          },
+          {
+            "label": "meta1Oracle",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IMeta1Oracle)890",
+            "contract": "WithdrawContract",
+            "src": "contracts/WithdrawContract.sol:17"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20MetadataUpgradeable)368": {
+            "label": "contract IERC20MetadataUpgradeable",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IMeta1Oracle)890": {
+            "label": "contract IMeta1Oracle",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "b851e79a37a3c845da2806cce547bdaefc66bc21afa7cc10cd46926104674853": {
+      "address": "0xb8694C7AD5a462f84861dCaa1Fa242F6b6f0fB83",
+      "txHash": "0x6541b5f4a0aed861f7bf5ee950a41d597481086e7ba10e90e35c8c79e4c63083",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "label": "wMeta1",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_contract(IERC20MetadataUpgradeable)368",
+            "contract": "WithdrawContract",
+            "src": "contracts/WithdrawContract.sol:16"
+          },
+          {
+            "label": "meta1Oracle",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IMeta1Oracle)890",
+            "contract": "WithdrawContract",
+            "src": "contracts/WithdrawContract.sol:17"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20MetadataUpgradeable)368": {
+            "label": "contract IERC20MetadataUpgradeable",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IMeta1Oracle)890": {
+            "label": "contract IMeta1Oracle",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

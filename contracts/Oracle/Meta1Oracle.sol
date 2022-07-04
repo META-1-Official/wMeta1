@@ -17,11 +17,8 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
 
     OracleStorage.CurrentRate public wMETAPrice;
 
-    bytes32 constant private jobId = "ca98366cc7314957b8c012c72f05aeeb"; // for Kovan and local
+    bytes32 constant private jobId = "63d075483978407abcb810084853f2ed"; // for Kovan and local // e5b99e0a-2f79-4029-98187-b11f37c56a6
     uint256 constant private payment = 1e17; // for Kovan and local
-
-//    bytes32 constant private jobId = "94f9b202c7e04c988ce39674f825389d"; // for Mainnet
-//    uint256 constant private payment = 1e18; // for Mainnet
 
     constructor(
         address _link,
@@ -40,11 +37,12 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
             this.fulfillPriceUpdate.selector
         );
 
-        req.add('urlPrice', 'https://meta1.bucle.dev/ticker/USDT/META1');
-        req.add('pathPrice', 'data,latest');
+        req.add('get', 'https://meta1.bucle.dev/ticker/USDT/META1');
+        req.add('path', 'data,latest');
         req.addInt('times', int256(10**ratePrecision));
-        req.add('urlUpdatedAt', 'https://meta1.bucle.dev/ticker/USDT/META1');
-        req.add('path', 'updated_at');
+
+//        req.add('urlUpdatedAt', 'https://meta1.bucle.dev/ticker/USDT/META1');
+//        req.add('path', 'updated_at');
 
         sendChainlinkRequest(req, payment);
     }
@@ -56,12 +54,12 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
 
     /* ========== CONSUMER FULFILL FUNCTIONS ========== */
 
-    function fulfillPriceUpdate(bytes32 _requestId, uint256 _price, uint256 _updated_at)
+    function fulfillPriceUpdate(bytes32 _requestId, uint256 _price)
         public
         recordChainlinkFulfillment(_requestId)
     {
         wMETAPrice.price = uint128(_price);
-        wMETAPrice.updatedAt = uint32(_updated_at);
+        wMETAPrice.updatedAt = uint32(block.timestamp);
     }
 
     /* ========== OTHER FUNCTIONS ========== */

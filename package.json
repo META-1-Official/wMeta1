@@ -44,6 +44,8 @@
   "scripts": {
     "hardhat:compile": "hardhat compile",
     "hardhat:deploy:wrappedMeta": "hardhat run --network BSCTestnet scripts/WrappedMetaDeploy.ts",
-    "hardhat:verify:wrappedMeta": "hardhat verify --network BSCTestnet 0xf6E84Ea2b0BB2612b753Fbce5B145a32454307f4"
+    "hardhat:verify:wrappedMeta": "hardhat verify --network BSCTestnet 0xf6E84Ea2b0BB2612b753Fbce5B145a32454307f4",
+    "hardhat:deploy:withdrawContract": "hardhat run --network BSCTestnet scripts/WithdrawContractDeploy.ts",
+    "hardhat:verify:withdrawContract": "hardhat verify --network BSCTestnet 0xf6E84Ea2b0BB2612b753Fbce5B145a32454307f4"
   }
 }

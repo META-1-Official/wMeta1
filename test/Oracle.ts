@@ -9,9 +9,9 @@ let _oracleContract: ContractFactory;
 let oracleContract: Contract;
 let owner: SignerWithAddress;
 
-describe("Oracle", function () {
+describe("AggregatorOracle", function () {
   beforeEach(async function () {
-    _oracleContract = await ethers.getContractFactory("Oracle");
+    _oracleContract = await ethers.getContractFactory("AggregatorOracle");
     [owner] = await ethers.getSigners();
 
     oracleContract = await _oracleContract.deploy(
@@ -29,7 +29,7 @@ describe("Oracle", function () {
       } catch (e) {
         console.log(e);
       }
-      expect(oracleContract.signer).to.equal(owner.address);
+      expect(await oracleContract.signer.getAddress()).to.equal(owner.address);
     });
   });
 });

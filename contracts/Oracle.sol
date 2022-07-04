@@ -12,8 +12,23 @@ contract Oracle {
                 priceFeed = AggregatorV3Interface(AggregatorAddress);
     }
 
-    function getLatestPrice() public view returns (int256) {
+    function getLatestPrice(uint8 _decimals) public view returns (int256) {
         (,int256 price,,,) = priceFeed.latestRoundData();
-        return price;
+        uint8 baseDecimals = priceFeed.decimals();
+        int256 basePrice = scalePrice(price, baseDecimals, _decimals);
+        return basePrice;
+    }
+
+    function scalePrice(int256 _price, uint8 _priceDecimals, uint8 _decimals)
+    internal
+    pure
+    returns (int256)
+    {
+        if (_priceDecimals < _decimals) {
+            return _price * int256(10 ** uint256(_decimals - _priceDecimals));
+        } else if (_priceDecimals > _decimals) {
+            return _price / int256(10 ** uint256(_priceDecimals - _decimals));
+        }
+        return _price;
     }
 }

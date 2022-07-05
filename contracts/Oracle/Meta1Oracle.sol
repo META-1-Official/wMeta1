@@ -12,7 +12,7 @@ import "./OracleStorage.sol";
 contract Meta1Oracle is ChainlinkClient, Ownable {
     using Chainlink for Chainlink.Request;
 
-    uint8 public constant ratePrecision = 4;
+    uint8 public constant ratePrecision = 16;
     uint32 public constant maxUpdateDelay = 86400; // price cannot be older then 1 d
 
     OracleStorage.CurrentRate public wMETAPrice;

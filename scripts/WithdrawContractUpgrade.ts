@@ -15,7 +15,7 @@ async function main() {
   console.log("Meta1Oracle deployed to:", _meta1Oracle.address); */
 
   const WIDTHDRAWAL_CONTRACT_PROXY =
-    "0xacF96Ad1959050f0Fb0Bb6fbc22cA4bab814D92C";
+    "0x5A9B0a4DC22ca80F70ee0414f3B95AC1f156E990";
   // We get the contract to deploy
   const WithdrawContract = await ethers.getContractFactory("WithdrawContract");
   await upgrades.upgradeProxy(WIDTHDRAWAL_CONTRACT_PROXY, WithdrawContract);

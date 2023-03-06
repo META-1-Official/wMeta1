@@ -17,8 +17,8 @@ async function main() {
   // We get the contract to deploy
   const WithdrawContract = await ethers.getContractFactory("WithdrawContract");
   const withdrawContract = await upgrades.deployProxy(WithdrawContract, [
-    "0xf6E84Ea2b0BB2612b753Fbce5B145a32454307f4",
-    "0x76C769e1C019bBa6B5755b656465BC91e0Da12ea",
+    "0x93Fb7B350D9a8E7ade638FB5b00A7C5E0a7c1F39",
+    "0x64b7b34724d21739493b4273535fed4AE5cFF6Af",
   ]);
   await withdrawContract.deployed();
   console.log("WithdrawContract deployed to:", withdrawContract.address);

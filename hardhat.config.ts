@@ -32,9 +32,15 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     BSCTestnet: {
-      url: process.env.BSCTESTNET_URL || "",
+      url: process.env.NODE_RPC_URL || "",
       accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+          process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      // @ts-ignore
+      networkCheckTimeout: 20000,
+      skipDryRun: true,
+      gas: 7000000,
+      gasPrice: 10000000000,
+      network_id: process.env.CHAIN_ID,
     },
   },
   gasReporter: {

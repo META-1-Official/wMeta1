@@ -26,7 +26,7 @@ for example, run `npx hardhat run scripts/WrappedMetaDeploy.ts --network BSCMain
 
 
 *Withdrawal contract is upgradable*  
-*any wallet with role `PRICE_UPDATE_ROLE` can update rates in WIthdrawal contract which will be used to deposit or withdraw wMeta against USDT*  
+*any wallet with role `PRICE_UPDATE_ROLE` can update rates in Withdraw contract which will be used to deposit or withdraw wMeta against USDT*  
 *Price precision is 8*  
 
 ## Test

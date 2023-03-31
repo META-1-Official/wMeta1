@@ -2,31 +2,23 @@
 
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./Oracle/OracleStorage.sol";
 
-contract WithdrawContract is OwnableUpgradeable, AccessControlUpgradeable {
-    using SafeERC20Upgradeable for IERC20MetadataUpgradeable;
+contract WithdrawContract is Ownable, AccessControl {
+    using SafeERC20 for IERC20Metadata;
 
-    IERC20MetadataUpgradeable USDT;
+    uint8 public constant ratePrecision = 8;
     bytes32 public constant PRICE_UPDATE_ROLE = keccak256("PRICE_UPDATE_ROLE");
 
-    IERC20MetadataUpgradeable wMeta1;
-    uint8 public constant ratePrecision = 8;
+    IERC20Metadata USDT;
+    IERC20Metadata wMeta1;
     OracleStorage.CurrentRate public wMETAPrice;
 
-//    // @custom:oz-upgrades-unsafe-allow constructor
-//    constructor() {
-//        _disableInitializers();
-//    }
-
-    function initialize(address _wMeta1, address _usdt) public initializer {
-        __Ownable_init();
-
+    constructor(address _wMeta1, address _usdt) {
         wMeta1 = IERC20MetadataUpgradeable(_wMeta1);
         USDT = IERC20MetadataUpgradeable(_usdt);
     }
@@ -44,6 +36,8 @@ contract WithdrawContract is OwnableUpgradeable, AccessControlUpgradeable {
     }
 
     function deposit(uint256 _amount) public {
+        require(wMETAPrice.updatedAt > block.timestamp - 3600, "WC: price is more then 1 hour old");
+
         USDT.safeTransferFrom(msg.sender, address(this), _amount);
         uint256 depositAmount = calcDepositAmount(_amount);
         wMeta1.safeTransfer(msg.sender, depositAmount);
@@ -57,6 +51,8 @@ contract WithdrawContract is OwnableUpgradeable, AccessControlUpgradeable {
     }
 
     function withdraw(uint256 _amount) public {
+        require(wMETAPrice.updatedAt > block.timestamp - 3600, "WC: price is more then 1 hour old");
+
         wMeta1.safeTransferFrom(msg.sender, address(this), _amount);
         uint256 withdrawAmount = calcWithdrawAmount(_amount);
         USDT.safeTransfer(msg.sender, withdrawAmount);

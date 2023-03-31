@@ -10,7 +10,7 @@ async function main() {
 
   // We get the contract to deploy
   const WithdrawContract = await ethers.getContractFactory("WithdrawContract");
-  const withdrawContract = await WithdrawContract.deploy(process.env.WMETA_ADDRESS, String(process.env.USDT_ADDRESS));
+  const withdrawContract = await WithdrawContract.deploy(String(process.env.WMETA_ADDRESS), String(process.env.USDT_ADDRESS));
   await withdrawContract.deployed();
   console.log("WithdrawContract deployed to:", withdrawContract.address);
 

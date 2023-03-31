@@ -10,7 +10,7 @@ async function main() {
 
   // We get the contract to deploy
   const WithdrawContract = await ethers.getContractFactory("WithdrawContract");
-  const withdrawContract = await WithdrawContract.deploy(process.env.WMETA_ADDRESS, process.env.USDT_ADDRESS);
+  const withdrawContract = await WithdrawContract.deploy(process.env.WMETA_ADDRESS, String(process.env.USDT_ADDRESS));
   await withdrawContract.deployed();
   console.log("WithdrawContract deployed to:", withdrawContract.address);
 
@@ -18,7 +18,7 @@ async function main() {
 
   const _withdrawContract = await WithdrawContract.attach(withdrawContract.address);
 
-  await _withdrawContract.givePriceUpdateRole(process.env.PRICE_USER_ROLE_ADDRESS);
+  await _withdrawContract.givePriceUpdateRole(String(process.env.PRICE_USER_ROLE_ADDRESS));
 
   console.log("All done!!!");
 }

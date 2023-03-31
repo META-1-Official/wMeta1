@@ -19,8 +19,8 @@ contract WithdrawContract is Ownable, AccessControl {
     OracleStorage.CurrentRate public wMETAPrice;
 
     constructor(address _wMeta1, address _usdt) {
-        wMeta1 = IERC20MetadataUpgradeable(_wMeta1);
-        USDT = IERC20MetadataUpgradeable(_usdt);
+        wMeta1 = IERC20Metadata(_wMeta1);
+        USDT = IERC20Metadata(_usdt);
     }
 
     modifier onlyPriceRoleUSer() {
@@ -64,7 +64,7 @@ contract WithdrawContract is Ownable, AccessControl {
     }
 
     function _transferAnyToken(address _tokenAddress, address _recipient, uint _amount) external onlyOwner {
-        require(IERC20MetadataUpgradeable(_tokenAddress).transfer(_recipient, _amount), "WC: Token transfer failed");
+        require(IERC20Metadata(_tokenAddress).transfer(_recipient, _amount), "WC: Token transfer failed");
     }
 
 

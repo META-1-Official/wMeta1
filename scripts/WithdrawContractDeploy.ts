@@ -4,6 +4,7 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { ethers, upgrades } from "hardhat";
+require('dotenv').config();
 
 async function main() {
   /* const Meta1Oracle = await ethers.getContractFactory("Meta1Oracle");
@@ -16,10 +17,7 @@ async function main() {
 
   // We get the contract to deploy
   const WithdrawContract = await ethers.getContractFactory("WithdrawContract");
-  const withdrawContract = await upgrades.deployProxy(WithdrawContract, [
-    "0x93Fb7B350D9a8E7ade638FB5b00A7C5E0a7c1F39",
-    "0x64b7b34724d21739493b4273535fed4AE5cFF6Af",
-  ]);
+  const withdrawContract = await upgrades.deployProxy(WithdrawContract, [process.env.WMETA_ADDRESS, process.env.USDT_ADDRESS]);
   await withdrawContract.deployed();
   console.log("WithdrawContract deployed to:", withdrawContract.address);
 }

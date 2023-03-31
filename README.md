@@ -25,6 +25,10 @@ for example, run `npx hardhat run scripts/WrappedMetaDeploy.ts --network BSCMain
   *Make sure the private key you set in .env has at-least 0.1 BNB to deploy the contracts*
 
 
+*Withdrawal contract is upgradable*  
+*any wallet with role `PRICE_UPDATE_ROLE` can update rates in WIthdrawal contract which will be used to deposit or withdraw wMeta against USDT*  
+*Price precision is 8*  
+
 ## Test
 
 Run `npx hardhat test` to test all smart contracts on local hardhat chain

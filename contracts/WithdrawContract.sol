@@ -7,17 +7,16 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20Metadat
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "./Oracle/IMeta1Oracle.sol";
 import "./Oracle/OracleStorage.sol";
 
 contract WithdrawContract is OwnableUpgradeable, AccessControlUpgradeable {
     using SafeERC20Upgradeable for IERC20MetadataUpgradeable;
 
-    IERC20MetadataUpgradeable constant USDT = IERC20MetadataUpgradeable(0x89838Ad31A068883E49Da8950b3151a1a275adf0);
+    IERC20MetadataUpgradeable USDT;
     bytes32 public constant PRICE_UPDATE_ROLE = keccak256("PRICE_UPDATE_ROLE");
 
     IERC20MetadataUpgradeable wMeta1;
-    IMeta1Oracle meta1Oracle;
+    uint8 public constant ratePrecision = 8;
     OracleStorage.CurrentRate public wMETAPrice;
 
 //    // @custom:oz-upgrades-unsafe-allow constructor
@@ -25,11 +24,11 @@ contract WithdrawContract is OwnableUpgradeable, AccessControlUpgradeable {
 //        _disableInitializers();
 //    }
 
-    function initialize(address _wMeta1, address _meta1Oracle) public initializer {
+    function initialize(address _wMeta1, address _usdt) public initializer {
         __Ownable_init();
 
         wMeta1 = IERC20MetadataUpgradeable(_wMeta1);
-        meta1Oracle = IMeta1Oracle(_meta1Oracle);
+        USDT = IERC20MetadataUpgradeable(_usdt);
     }
 
     modifier onlyPriceRoleUSer() {
@@ -39,7 +38,7 @@ contract WithdrawContract is OwnableUpgradeable, AccessControlUpgradeable {
 
     function calcDepositAmount(uint256 _amount) public view returns (uint256) {
         // Normalise oracle price as per USDT token decimals
-        uint256 meta1Price = (uint256(wMETAPrice.price) * (10 ** USDT.decimals())) / 10 ** meta1Oracle.ratePrecision();
+        uint256 meta1Price = (uint256(wMETAPrice.price) * (10 ** USDT.decimals())) / 10 ** ratePrecision;
         // Multiplying with 1e8 to support values lower then the price of meta1 token upto 8 decimal precision
         return ((_amount * 1e8) / meta1Price) * (10 ** (wMeta1.decimals() - 8));
     }
@@ -52,7 +51,7 @@ contract WithdrawContract is OwnableUpgradeable, AccessControlUpgradeable {
 
     function calcWithdrawAmount(uint256 _amount) public view returns (uint256) {
         // Normalise oracle price as per provided token decimals
-        uint256 meta1Price = (uint256(wMETAPrice.price) * (10 ** USDT.decimals())) / 10 ** meta1Oracle.ratePrecision();
+        uint256 meta1Price = (uint256(wMETAPrice.price) * (10 ** USDT.decimals())) / 10 ** ratePrecision;
 
         return (_amount * meta1Price) / (10 ** (wMeta1.decimals()));
     }

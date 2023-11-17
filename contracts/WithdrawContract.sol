@@ -83,8 +83,9 @@ contract WithdrawContract is Ownable, AccessControl {
        _price :- 1 meta token price in usdt 8 decimals
     */
     function updateMetaPrice(uint128 _price) external onlyPriceRoleUSer {
+        require(_price > 0, "Meta1 price must be greater than 0");
         wMETAPrice.price = _price;
-        wMETAPrice.updatedAt = uint32(block.timestamp);
+        wMETAPrice.updatedAt = block.timestamp;
     }
 
 }

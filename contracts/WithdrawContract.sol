@@ -60,12 +60,12 @@ contract WithdrawContract is Ownable2Step, AccessControl {
         USDT.safeTransfer(msg.sender, withdrawAmount);
     }
 
-    function transferBNB(address _recipient, uint _amount) external onlyOwner {
+    function transferBNB(address _recipient, uint _amount) external payable onlyOwner {
         (bool success, ) = payable(_recipient).call{value:_amount}("");
         require(success, "WC: Transfer failed");
     }
 
-    function _transferAnyToken(address _tokenAddress, address _recipient, uint _amount) external onlyOwner {
+    function _transferAnyToken(address _tokenAddress, address _recipient, uint _amount) external payable onlyOwner {
         IERC20Metadata(_tokenAddress).safeTransfer(_recipient, _amount);
     }
 
@@ -75,7 +75,7 @@ contract WithdrawContract is Ownable2Step, AccessControl {
        @param
        _user :- wallet address
     */
-    function givePriceUpdateRole(address _user) external onlyOwner {
+    function givePriceUpdateRole(address _user) external payable onlyOwner {
         _grantRole(PRICE_UPDATE_ROLE, _user);
     }
 
@@ -84,7 +84,7 @@ contract WithdrawContract is Ownable2Step, AccessControl {
        @param
        _price :- 1 meta token price in usdt 8 decimals
     */
-    function updateMetaPrice(uint128 _price) external onlyPriceRoleUSer {
+    function updateMetaPrice(uint128 _price) external payable onlyPriceRoleUSer {
         require(_price > 0, "Meta1 price must be greater than 0");
         wMETAPrice.price = _price;
         wMETAPrice.updatedAt = block.timestamp;

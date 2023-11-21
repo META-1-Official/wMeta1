@@ -67,11 +67,11 @@ contract Meta1Oracle is ChainlinkClient, Ownable2Step {
         return chainlinkOracleAddress();
     }
 
-    function setOracle(address _oracle) external onlyOwner {
+    function setOracle(address _oracle) external payable onlyOwner {
         setChainlinkOracle(_oracle);
     }
 
-    function withdrawLink() public onlyOwner {
+    function withdrawLink() public payable onlyOwner {
         LinkTokenInterface linkToken = LinkTokenInterface(
             chainlinkTokenAddress()
         );

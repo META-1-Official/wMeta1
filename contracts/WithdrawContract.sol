@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-LICENSE
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
@@ -18,7 +18,7 @@ contract WithdrawContract is Ownable2Step, AccessControl {
     IERC20Metadata wMeta1;
     OracleStorage.CurrentRate public wMETAPrice;
 
-    constructor(address _wMeta1, address _usdt) {
+    constructor(address _wMeta1, address _usdt) Ownable(msg.sender) {
         wMeta1 = IERC20Metadata(_wMeta1);
         USDT = IERC20Metadata(_usdt);
     }

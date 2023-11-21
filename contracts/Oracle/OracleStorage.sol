@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: LicenseRef-LICENSE
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 library OracleStorage {
     struct CurrentRate {

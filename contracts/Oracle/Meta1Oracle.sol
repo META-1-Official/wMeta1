@@ -1,15 +1,14 @@
 //SPDX-License-Identifier: LicenseRef-LICENSE
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 
 import "./OracleStorage.sol";
 
 // Complete oracle
 // add roles and permissions in oracle, probably make a centralised contract for roles and permissions to be used in all
-contract Meta1Oracle is ChainlinkClient, Ownable {
+contract Meta1Oracle is ChainlinkClient, Ownable2Step {
     using Chainlink for Chainlink.Request;
 
     uint8 public constant ratePrecision = 8;
@@ -23,7 +22,7 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
     constructor(
         address _link,
         address _oracle
-    ) {
+    ) Ownable(msg.sender) {
         setChainlinkToken(_link);
         setChainlinkOracle(_oracle);
     }

@@ -36,7 +36,7 @@ contract WithdrawContract is Ownable2Step, AccessControl {
     }
 
     function deposit(uint256 _amount) public {
-        require(wMETAPrice.updatedAt > block.timestamp - 3600, "WC: price is more then 1 hour old");
+        require(wMETAPrice.updatedAt > block.timestamp - 1 hours, "WC: price is more then 1 hour old");
 
         USDT.safeTransferFrom(msg.sender, address(this), _amount);
         uint256 depositAmount = calcDepositAmount(_amount);
@@ -51,7 +51,7 @@ contract WithdrawContract is Ownable2Step, AccessControl {
     }
 
     function withdraw(uint256 _amount) public {
-        require(wMETAPrice.updatedAt > block.timestamp - 3600, "WC: price is more then 1 hour old");
+        require(wMETAPrice.updatedAt > block.timestamp - 1 hours, "WC: price is more then 1 hour old");
 
         wMeta1.safeTransferFrom(msg.sender, address(this), _amount);
         uint256 withdrawAmount = calcWithdrawAmount(_amount);

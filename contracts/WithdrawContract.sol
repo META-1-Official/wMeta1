@@ -18,9 +18,11 @@ contract WithdrawContract is Ownable2Step, AccessControl {
     IERC20Metadata wMeta1;
     OracleStorage.CurrentRate public wMETAPrice;
 
-    constructor(address _wMeta1, address _usdt) Ownable(msg.sender) {
+    constructor(address _wMeta1, address _usdt, uint128 _price) Ownable(msg.sender) {
         wMeta1 = IERC20Metadata(_wMeta1);
         USDT = IERC20Metadata(_usdt);
+        wMETAPrice.price = _price;
+        wMETAPrice.updatedAt = block.timestamp;
     }
 
     modifier onlyPriceRoleUSer() {

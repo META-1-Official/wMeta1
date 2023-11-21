@@ -64,7 +64,7 @@ contract WithdrawContract is Ownable2Step, AccessControl {
     }
 
     function _transferAnyToken(address _tokenAddress, address _recipient, uint _amount) external onlyOwner {
-        require(IERC20Metadata(_tokenAddress).transfer(_recipient, _amount), "WC: Token transfer failed");
+        IERC20Metadata(_tokenAddress).safeTransfer(_recipient, _amount);
     }
 
 

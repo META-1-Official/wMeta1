@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.1",
-    "@openzeppelin/contracts": "^4.6.0",
-    "@openzeppelin/contracts-upgradeable": "^4.6.0",
+    "@openzeppelin/contracts": "4.9.3",
+    "@openzeppelin/contracts-upgradeable": "4.9.3",
     "ethereum-checksum-address": "^0.0.8"
   },
   "scripts": {

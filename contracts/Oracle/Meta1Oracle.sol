@@ -17,8 +17,8 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
 
     OracleStorage.CurrentRate public wMETAPrice;
 
-    bytes32 constant private jobId = "63d075483978407abcb810084853f2ed"; // for Kovan and local // e5b99e0a-2f79-4029-98187-b11f37c56a6
-    uint256 constant private payment = 1e17; // for Kovan and local
+    bytes32 immutable private jobId = "63d075483978407abcb810084853f2ed"; // for Kovan and local // e5b99e0a-2f79-4029-98187-b11f37c56a6
+    uint256 immutable private payment = 1e17; // for Kovan and local
 
     constructor(
         address _link,

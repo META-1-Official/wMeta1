@@ -1,15 +1,14 @@
 //SPDX-License-Identifier: LicenseRef-LICENSE
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 
 import "./OracleStorage.sol";
 
 // Complete oracle
 // add roles and permissions in oracle, probably make a centralised contract for roles and permissions to be used in all
-contract Meta1Oracle is ChainlinkClient, Ownable {
+contract Meta1Oracle is ChainlinkClient, Ownable2Step {
     using Chainlink for Chainlink.Request;
 
     uint8 public constant ratePrecision = 8;
@@ -17,13 +16,13 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
 
     OracleStorage.CurrentRate public wMETAPrice;
 
-    bytes32 constant private jobId = "63d075483978407abcb810084853f2ed"; // for Kovan and local // e5b99e0a-2f79-4029-98187-b11f37c56a6
-    uint256 constant private payment = 1e17; // for Kovan and local
+    bytes32 immutable private jobId = "63d075483978407abcb810084853f2ed"; // for Kovan and local // e5b99e0a-2f79-4029-98187-b11f37c56a6
+    uint256 immutable private payment = 1e17; // for Kovan and local
 
     constructor(
         address _link,
         address _oracle
-    ) {
+    ) Ownable(msg.sender) {
         setChainlinkToken(_link);
         setChainlinkOracle(_oracle);
     }
@@ -68,11 +67,11 @@ contract Meta1Oracle is ChainlinkClient, Ownable {
         return chainlinkOracleAddress();
     }
 
-    function setOracle(address _oracle) external onlyOwner {
+    function setOracle(address _oracle) external payable onlyOwner {
         setChainlinkOracle(_oracle);
     }
 
-    function withdrawLink() public onlyOwner {
+    function withdrawLink() public payable onlyOwner {
         LinkTokenInterface linkToken = LinkTokenInterface(
             chainlinkTokenAddress()
         );

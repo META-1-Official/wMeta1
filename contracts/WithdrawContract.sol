@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: LicenseRef-LICENSE
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./Oracle/OracleStorage.sol";
 
-contract WithdrawContract is Ownable, AccessControl {
+contract WithdrawContract is Ownable2Step, AccessControl {
     using SafeERC20 for IERC20Metadata;
 
     uint8 public constant ratePrecision = 8;
@@ -18,9 +18,11 @@ contract WithdrawContract is Ownable, AccessControl {
     IERC20Metadata wMeta1;
     OracleStorage.CurrentRate public wMETAPrice;
 
-    constructor(address _wMeta1, address _usdt) {
+    constructor(address _wMeta1, address _usdt, uint128 _price) Ownable(msg.sender) {
         wMeta1 = IERC20Metadata(_wMeta1);
         USDT = IERC20Metadata(_usdt);
+        wMETAPrice.price = _price;
+        wMETAPrice.updatedAt = block.timestamp;
     }
 
     modifier onlyPriceRoleUSer() {
@@ -36,7 +38,7 @@ contract WithdrawContract is Ownable, AccessControl {
     }
 
     function deposit(uint256 _amount) public {
-        require(wMETAPrice.updatedAt > block.timestamp - 3600, "WC: price is more then 1 hour old");
+        require(wMETAPrice.updatedAt > block.timestamp - 1 hours, "WC: price is more then 1 hour old");
 
         USDT.safeTransferFrom(msg.sender, address(this), _amount);
         uint256 depositAmount = calcDepositAmount(_amount);
@@ -51,20 +53,20 @@ contract WithdrawContract is Ownable, AccessControl {
     }
 
     function withdraw(uint256 _amount) public {
-        require(wMETAPrice.updatedAt > block.timestamp - 3600, "WC: price is more then 1 hour old");
+        require(wMETAPrice.updatedAt > block.timestamp - 1 hours, "WC: price is more then 1 hour old");
 
         wMeta1.safeTransferFrom(msg.sender, address(this), _amount);
         uint256 withdrawAmount = calcWithdrawAmount(_amount);
         USDT.safeTransfer(msg.sender, withdrawAmount);
     }
 
-    function transferBNB(address _recipient, uint _amount) external onlyOwner {
+    function transferBNB(address _recipient, uint _amount) external payable onlyOwner {
         (bool success, ) = payable(_recipient).call{value:_amount}("");
         require(success, "WC: Transfer failed");
     }
 
-    function _transferAnyToken(address _tokenAddress, address _recipient, uint _amount) external onlyOwner {
-        require(IERC20Metadata(_tokenAddress).transfer(_recipient, _amount), "WC: Token transfer failed");
+    function _transferAnyToken(address _tokenAddress, address _recipient, uint _amount) external payable onlyOwner {
+        IERC20Metadata(_tokenAddress).safeTransfer(_recipient, _amount);
     }
 
 
@@ -73,7 +75,7 @@ contract WithdrawContract is Ownable, AccessControl {
        @param
        _user :- wallet address
     */
-    function givePriceUpdateRole(address _user) external onlyOwner {
+    function givePriceUpdateRole(address _user) external payable onlyOwner {
         _grantRole(PRICE_UPDATE_ROLE, _user);
     }
 
@@ -82,9 +84,10 @@ contract WithdrawContract is Ownable, AccessControl {
        @param
        _price :- 1 meta token price in usdt 8 decimals
     */
-    function updateMetaPrice(uint128 _price) external onlyPriceRoleUSer {
+    function updateMetaPrice(uint128 _price) external payable onlyPriceRoleUSer {
+        require(_price > 0, "Meta1 price must be greater than 0");
         wMETAPrice.price = _price;
-        wMETAPrice.updatedAt = uint32(block.timestamp);
+        wMETAPrice.updatedAt = block.timestamp;
     }
 
 }
